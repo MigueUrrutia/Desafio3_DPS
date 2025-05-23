@@ -13,7 +13,7 @@ import { Picker } from "@react-native-picker/picker";
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 
-const API_URL = "http://192.168.0.15:3000/api";
+const API_URL = "http://192.168.0.17:3000/api";
 
 export default function HomeScreen({ navigation }) {
   const [books, setBooks] = useState([]);

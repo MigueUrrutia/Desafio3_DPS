@@ -3,7 +3,7 @@ import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Title } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://192.168.0.15:3000/api';
+const API_URL = 'http://192.168.0.17:3000/api';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');

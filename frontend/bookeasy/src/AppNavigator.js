@@ -2,11 +2,11 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import HomeScreen from '../screens/HomeScreen';
-import AddBookScreen from '../screens/AddBookScreen';
-import BookDetailScreen from '../screens/BookDetailScreen';
+import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import HomeScreen from './screens/HomeScreen';
+import AddBookScreen from './screens/AddBookScreen';
+import BookDetailScreen from './screens/BookDetailScreen';
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {

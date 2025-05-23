@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 
-const API_URL = 'http://192.168.0.15:3000/api';
+const API_URL = 'http://192.168.0.17:3000/api';
 
 export default function BookDetailScreen({ route, navigation }) {
   const { bookId } = route.params;

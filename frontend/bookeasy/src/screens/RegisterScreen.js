@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 
-const API_URL = 'http://192.168.0.15:3000/api';
+const API_URL = 'http://192.168.0.17:3000/api';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');

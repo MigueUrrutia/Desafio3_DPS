@@ -1,13 +1,5 @@
 import React, { useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Alert,
-  ActivityIndicator,
-  TouchableOpacity
-} from "react-native";
+import { View, Text, StyleSheet, FlatList, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { useFocusEffect } from "@react-navigation/native";

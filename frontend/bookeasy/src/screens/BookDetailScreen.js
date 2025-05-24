@@ -1,126 +1,140 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 
-const API_URL = 'http://192.168.0.17:3000/api';
+const API_URL = 'http://192.168.0.15:3000/api/books';
 
 export default function BookDetailScreen({ route, navigation }) {
-  const { bookId } = route.params;
+  const { book } = route.params;
+  const [title, setTitle] = useState(book.title);
+  const [status, setStatus] = useState(book.status);
+  const [comment, setComment] = useState(book.comment || '');
 
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [status, setStatus] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [comment, setComment] = useState('');
-
-  const fetchBook = async () => {
+  const handleUpdate = async () => {
     const token = await AsyncStorage.getItem('token');
 
     try {
-      const res = await fetch(`${API_URL}/books/${bookId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error al obtener datos');
-
-      setTitle(data.title);
-      setAuthor(data.author);
-      setStatus(data.status);
-      setStartDate(data.startDate || '');
-      setEndDate(data.endDate || '');
-      setComment(data.comment || '');
-    } catch (err) {
-      Alert.alert('Error', err.message);
-      navigation.goBack();
-    }
-  };
-
-  const updateBook = async () => {
-    const token = await AsyncStorage.getItem('token');
-
-    try {
-      const res = await fetch(`${API_URL}/books/${bookId}`, {
+      const response = await fetch(`${API_URL}/${book.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ title, author, status, startDate, endDate, comment })
+        body: JSON.stringify({ title, status, comment })
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo actualizar');
-
+      if (!response.ok) throw new Error('No se pudo actualizar');
       Alert.alert('Libro actualizado');
       navigation.goBack();
-    } catch (err) {
-      Alert.alert('Error', err.message);
+    } catch (error) {
+      Alert.alert('Error', error.message);
     }
   };
 
-  const deleteBook = async () => {
+  const handleDelete = async () => {
     const token = await AsyncStorage.getItem('token');
 
     try {
-      await fetch(`${API_URL}/books/${bookId}`, {
+      const response = await fetch(`${API_URL}/${book.id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
+
+      if (!response.ok) throw new Error('No se pudo eliminar');
       Alert.alert('Libro eliminado');
       navigation.goBack();
-    } catch (err) {
-      Alert.alert('Error', err.message);
+    } catch (error) {
+      Alert.alert('Error', error.message);
     }
   };
 
-  useEffect(() => {
-    fetchBook();
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Detalles del libro</Text>
+      <Text style={styles.title}>Editar Libro</Text>
 
-      <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Título" />
-      <TextInput style={styles.input} value={author} onChangeText={setAuthor} placeholder="Autor" />
-
-      <Text style={styles.label}>Estado:</Text>
-      <Picker selectedValue={status} onValueChange={setStatus} style={styles.picker}>
-        <Picker.Item label="Por leer" value="por leer" />
-        <Picker.Item label="Leyendo" value="leyendo" />
-        <Picker.Item label="Completado" value="completado" />
-      </Picker>
-
-      <TextInput style={styles.input} value={startDate} onChangeText={setStartDate} placeholder="Fecha inicio" />
-      <TextInput style={styles.input} value={endDate} onChangeText={setEndDate} placeholder="Fecha fin" />
+      <Text style={styles.label}>Título</Text>
       <TextInput
         style={styles.input}
+        value={title}
+        onChangeText={setTitle}
+        placeholder="Título del libro"
+      />
+
+      <Text style={styles.label}>Estado</Text>
+      <View style={styles.pickerWrapper}>
+        <Picker selectedValue={status} onValueChange={setStatus}>
+          <Picker.Item label="Por leer" value="por leer" />
+          <Picker.Item label="Leyendo" value="leyendo" />
+          <Picker.Item label="Completado" value="completado" />
+        </Picker>
+      </View>
+
+      <Text style={styles.label}>Comentario</Text>
+      <TextInput
+        style={[styles.input, { height: 80 }]}
         value={comment}
         onChangeText={setComment}
         placeholder="Comentario"
         multiline
       />
 
-      <Button title="Guardar cambios" onPress={updateBook} />
-      <View style={{ marginTop: 10 }}>
-        <Button title="Eliminar libro" onPress={deleteBook} color="red" />
-      </View>
+      <TouchableOpacity style={styles.buttonPrimary} onPress={handleUpdate}>
+        <Text style={styles.buttonText}>Actualizar libro</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.buttonDanger} onPress={handleDelete}>
+        <Text style={styles.buttonText}>Eliminar libro</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  container: { flex: 1, backgroundColor: '#fdf2e9', padding: 20 },
+  title: { fontSize: 26, fontWeight: 'bold', color: '#1f2937', marginBottom: 20, textAlign: 'center' },
+  label: { fontWeight: '600', marginBottom: 6, color: '#1f2937' },
   input: {
+    backgroundColor: '#f6ddcc',
+    borderColor: '#cbd5e1',
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 8,
     padding: 10,
     marginBottom: 12
   },
-  picker: { marginBottom: 16 },
-  label: { marginTop: 12, marginBottom: 4, fontWeight: 'bold' }
+  pickerWrapper: {
+    backgroundColor: '#ffffff',
+    borderColor: '#cbd5e1',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 12
+  },
+  buttonPrimary: {
+    backgroundColor: '#eb984e',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10
+  },
+  buttonDanger: {
+    backgroundColor: '#ec7063',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10
+  },
+  buttonText: {
+    color: '#fdf2e9',
+    fontWeight: '600',
+    fontSize: 16
+  }
 });
